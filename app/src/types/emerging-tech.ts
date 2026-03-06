@@ -1,3 +1,7 @@
+import type { PageData } from "@/types/common";
+
+export type { PageData };
+
 export const TECH_PROVIDERS = [
   "OPENAI",
   "ANTHROPIC",
@@ -54,13 +58,6 @@ export interface EmergingTechItem {
   metadata: EmergingTechMetadata | null;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface EmergingTechPageResponse {
-  pageSize: number;
-  pageNumber: number;
-  totalCount: number;
-  items: EmergingTechItem[];
 }
 
 export interface ApiResponse<T> {

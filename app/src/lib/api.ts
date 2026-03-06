@@ -1,6 +1,6 @@
 import type {
   ApiResponse,
-  EmergingTechPageResponse,
+  PageData,
   EmergingTechItem,
   ListParams,
   SearchParams,
@@ -22,10 +22,10 @@ function toQuery(params: object): string {
 
 export async function fetchList(
   params: ListParams = {}
-): Promise<EmergingTechPageResponse> {
+): Promise<PageData<EmergingTechItem>> {
   const res = await fetch(`${BASE}${toQuery(params)}`);
   if (!res.ok) throw new Error(`목록 조회 실패: ${res.status}`);
-  const json: ApiResponse<EmergingTechPageResponse> = await res.json();
+  const json: ApiResponse<PageData<EmergingTechItem>> = await res.json();
   return json.data;
 }
 
@@ -41,9 +41,9 @@ export async function fetchDetail(id: string): Promise<EmergingTechItem> {
 
 export async function fetchSearch(
   params: SearchParams
-): Promise<EmergingTechPageResponse> {
+): Promise<PageData<EmergingTechItem>> {
   const res = await fetch(`${BASE}/search${toQuery(params)}`);
   if (!res.ok) throw new Error(`검색 실패: ${res.status}`);
-  const json: ApiResponse<EmergingTechPageResponse> = await res.json();
+  const json: ApiResponse<PageData<EmergingTechItem>> = await res.json();
   return json.data;
 }

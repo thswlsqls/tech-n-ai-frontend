@@ -22,7 +22,7 @@ export default function Home() {
 
   // Data state
   const [items, setItems] = useState<EmergingTechItem[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
+  const [totalSize, setTotalSize] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [pageSize] = useState(20);
   const [loading, setLoading] = useState(true);
@@ -89,8 +89,8 @@ export default function Home() {
           page: pageNumber,
           size: pageSize,
         });
-        setItems(data.items);
-        setTotalCount(data.totalCount);
+        setItems(data.list);
+        setTotalSize(data.totalSize);
       } else {
         const data = await fetchList({
           page: pageNumber,
@@ -102,12 +102,12 @@ export default function Home() {
           endDate: endDate ?? undefined,
           sort: "publishedAt,desc",
         });
-        setItems(data.items);
-        setTotalCount(data.totalCount);
+        setItems(data.list);
+        setTotalSize(data.totalSize);
       }
     } catch {
       setItems([]);
-      setTotalCount(0);
+      setTotalSize(0);
     } finally {
       setLoading(false);
     }
@@ -182,7 +182,7 @@ export default function Home() {
               Results for &ldquo;{searchQuery}&rdquo;
             </span>
             <span className="text-sm text-gray-600">
-              {totalCount} items
+              {totalSize} items
             </span>
           </div>
         )}
@@ -195,7 +195,7 @@ export default function Home() {
           <div className="h-[3px] flex-1 bg-black" />
           {!loading && (
             <span className="brutal-border bg-white px-3 py-1 text-sm font-bold">
-              {totalCount} items
+              {totalSize} items
             </span>
           )}
         </div>
@@ -211,12 +211,12 @@ export default function Home() {
         />
 
         {/* Pagination */}
-        {!loading && totalCount > 0 && (
+        {!loading && totalSize > 0 && (
           <div className="py-4">
             <Pagination
               pageNumber={pageNumber}
               pageSize={pageSize}
-              totalCount={totalCount}
+              totalCount={totalSize}
               onPageChange={setPageNumber}
             />
           </div>
