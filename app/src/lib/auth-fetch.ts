@@ -21,6 +21,9 @@ const ERROR_MESSAGES: Record<string, string> = {
     "Token limit exceeded. Please start a new conversation.",
   SESSION_FORBIDDEN:
     "You don't have permission to access this session.",
+  INVALID_SESSION_ID: "Invalid session ID format.",
+  TITLE_EMPTY: "Title is required.",
+  TITLE_TOO_LONG: "Title cannot exceed 200 characters.",
 };
 
 const HTTP_FALLBACK: Record<number, string> = {

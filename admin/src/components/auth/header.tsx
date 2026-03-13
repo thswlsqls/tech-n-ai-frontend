@@ -40,6 +40,14 @@ export function Header() {
             >
               Accounts
             </Link>
+            <Link
+              href="/agent"
+              className={`text-sm font-bold transition-colors hover:text-[#3B82F6] ${
+                pathname === "/agent" ? "text-[#3B82F6]" : ""
+              }`}
+            >
+              Agent
+            </Link>
           </nav>
         </div>
 

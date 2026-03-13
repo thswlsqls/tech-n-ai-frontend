@@ -62,10 +62,12 @@ export function ChatInput({ onSend, disabled, isSending }: Props) {
             id="char-count"
             aria-live="polite"
             className={`absolute bottom-1 right-3 text-xs font-mono ${
-              isOverLimit ? "text-destructive" : "text-muted-foreground"
+              isOverLimit ? "text-destructive font-bold" : "text-muted-foreground"
             }`}
           >
-            {value.length}/{MAX_LENGTH}
+            {isOverLimit
+              ? `${value.length - MAX_LENGTH} over limit`
+              : `${value.length}/${MAX_LENGTH}`}
           </span>
         </div>
 

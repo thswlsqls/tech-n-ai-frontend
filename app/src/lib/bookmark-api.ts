@@ -1,4 +1,5 @@
 import { authFetch, parseResponse, parseVoidResponse } from "@/lib/auth-fetch";
+import { toQueryString } from "@/lib/utils";
 import type {
   BookmarkDetailResponse,
   BookmarkListResponse,
@@ -14,18 +15,6 @@ import type {
 
 const BASE = "/api/v1/bookmark";
 
-function toQuery(params: object): string {
-  const entries = Object.entries(params as Record<string, unknown>);
-  const sp = new URLSearchParams();
-  for (const [k, v] of entries) {
-    if (v !== undefined && v !== null && v !== "") {
-      sp.set(k, String(v));
-    }
-  }
-  const str = sp.toString();
-  return str ? `?${str}` : "";
-}
-
 export async function createBookmark(
   req: BookmarkCreateRequest
 ): Promise<BookmarkDetailResponse> {
@@ -39,7 +28,7 @@ export async function createBookmark(
 export async function fetchBookmarks(
   params: BookmarkListParams = {}
 ): Promise<BookmarkListResponse> {
-  const res = await authFetch(`${BASE}${toQuery(params)}`);
+  const res = await authFetch(`${BASE}${toQueryString(params)}`);
   return parseResponse<BookmarkListResponse>(res);
 }
 
@@ -71,7 +60,7 @@ export async function deleteBookmark(id: string): Promise<void> {
 export async function fetchDeletedBookmarks(
   params: BookmarkDeletedParams = {}
 ): Promise<BookmarkListResponse> {
-  const res = await authFetch(`${BASE}/deleted${toQuery(params)}`);
+  const res = await authFetch(`${BASE}/deleted${toQueryString(params)}`);
   return parseResponse<BookmarkListResponse>(res);
 }
 
@@ -88,7 +77,7 @@ export async function restoreBookmark(
 export async function searchBookmarks(
   params: BookmarkSearchParams
 ): Promise<BookmarkListResponse> {
-  const res = await authFetch(`${BASE}/search${toQuery(params)}`);
+  const res = await authFetch(`${BASE}/search${toQueryString(params)}`);
   return parseResponse<BookmarkListResponse>(res);
 }
 
@@ -97,7 +86,7 @@ export async function fetchBookmarkHistory(
   params: BookmarkHistoryParams = {}
 ): Promise<BookmarkHistoryListResponse> {
   const res = await authFetch(
-    `${BASE}/history/${encodeURIComponent(entityId)}${toQuery(params)}`
+    `${BASE}/history/${encodeURIComponent(entityId)}${toQueryString(params)}`
   );
   return parseResponse<BookmarkHistoryListResponse>(res);
 }
@@ -107,7 +96,7 @@ export async function fetchBookmarkAtTime(
   timestamp: string
 ): Promise<BookmarkHistoryDetailResponse> {
   const res = await authFetch(
-    `${BASE}/history/${encodeURIComponent(entityId)}/at${toQuery({ timestamp })}`
+    `${BASE}/history/${encodeURIComponent(entityId)}/at${toQueryString({ timestamp })}`
   );
   return parseResponse<BookmarkHistoryDetailResponse>(res);
 }
@@ -117,7 +106,7 @@ export async function restoreBookmarkVersion(
   historyId: string
 ): Promise<BookmarkDetailResponse> {
   const res = await authFetch(
-    `${BASE}/history/${encodeURIComponent(entityId)}/restore${toQuery({ historyId })}`,
+    `${BASE}/history/${encodeURIComponent(entityId)}/restore${toQueryString({ historyId })}`,
     { method: "POST" }
   );
   return parseResponse<BookmarkDetailResponse>(res);

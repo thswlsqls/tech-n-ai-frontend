@@ -1,35 +1,34 @@
 import { authFetch, parseResponse, parseVoidResponse } from "@/lib/auth-fetch";
 import { toQueryString } from "@/lib/utils";
 import type {
-  ChatRequest,
-  ChatResponse,
+  AgentRunRequest,
+  AgentExecutionResult,
   SessionResponse,
   SessionListResponse,
   MessageListResponse,
-  SessionListParams,
-  MessageListParams,
-} from "@/types/chatbot";
+  PaginationParams,
+} from "@/types/agent";
 
-const BASE = "/api/v1/chatbot";
+const BASE = "/api/v1/agent";
 
-export async function sendMessage(
-  req: ChatRequest
-): Promise<ChatResponse> {
-  const res = await authFetch(BASE, {
+export async function runAgent(
+  req: AgentRunRequest
+): Promise<AgentExecutionResult> {
+  const res = await authFetch(`${BASE}/run`, {
     method: "POST",
     body: JSON.stringify(req),
   });
-  return parseResponse<ChatResponse>(res);
+  return parseResponse<AgentExecutionResult>(res);
 }
 
-export async function fetchSessions(
-  params: SessionListParams = {}
+export async function fetchAgentSessions(
+  params: PaginationParams = {}
 ): Promise<SessionListResponse> {
   const res = await authFetch(`${BASE}/sessions${toQueryString(params)}`);
   return parseResponse<SessionListResponse>(res);
 }
 
-export async function fetchSessionDetail(
+export async function fetchAgentSessionDetail(
   sessionId: string
 ): Promise<SessionResponse> {
   const res = await authFetch(
@@ -38,9 +37,9 @@ export async function fetchSessionDetail(
   return parseResponse<SessionResponse>(res);
 }
 
-export async function fetchSessionMessages(
+export async function fetchAgentSessionMessages(
   sessionId: string,
-  params: MessageListParams = {}
+  params: PaginationParams = {}
 ): Promise<MessageListResponse> {
   const res = await authFetch(
     `${BASE}/sessions/${encodeURIComponent(sessionId)}/messages${toQueryString(params)}`
@@ -48,21 +47,7 @@ export async function fetchSessionMessages(
   return parseResponse<MessageListResponse>(res);
 }
 
-export async function updateSessionTitle(
-  sessionId: string,
-  title: string
-): Promise<SessionResponse> {
-  const res = await authFetch(
-    `${BASE}/sessions/${encodeURIComponent(sessionId)}/title`,
-    {
-      method: "PATCH",
-      body: JSON.stringify({ title }),
-    }
-  );
-  return parseResponse<SessionResponse>(res);
-}
-
-export async function deleteSession(sessionId: string): Promise<void> {
+export async function deleteAgentSession(sessionId: string): Promise<void> {
   const res = await authFetch(
     `${BASE}/sessions/${encodeURIComponent(sessionId)}`,
     { method: "DELETE" }

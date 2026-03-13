@@ -5,6 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function toQueryString(params: object): string {
+  const sp = new URLSearchParams();
+  for (const [k, v] of Object.entries(params as Record<string, unknown>)) {
+    if (v !== undefined && v !== null && v !== "") {
+      sp.set(k, String(v));
+    }
+  }
+  const str = sp.toString();
+  return str ? `?${str}` : "";
+}
+
 export function validatePassword(password: string): string | null {
   if (password.length < 8) {
     return "Password must be at least 8 characters with 2+ types (uppercase, lowercase, digit, special character).";

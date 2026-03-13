@@ -8,6 +8,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   BAD_REQUEST: "Invalid request. Please check your input.",
   INVALID_TOKEN: "Invalid token.",
   TOKEN_EXPIRED: "Token has expired.",
+  GOAL_EMPTY: "Goal is required.",
+  AGENT_EXECUTION_ERROR: "An error occurred during agent execution.",
+  INVALID_SESSION_ID: "Invalid session ID format.",
+  SESSION_FORBIDDEN: "You don't have permission to access this session.",
+  SESSION_NOT_FOUND: "Session not found.",
 };
 
 const HTTP_FALLBACK: Record<number, string> = {

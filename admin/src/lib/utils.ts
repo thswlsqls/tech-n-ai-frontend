@@ -5,6 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function toQueryString(params: object): string {
+  const sp = new URLSearchParams();
+  for (const [k, v] of Object.entries(params as Record<string, unknown>)) {
+    if (v !== undefined && v !== null && v !== "") {
+      sp.set(k, String(v));
+    }
+  }
+  const str = sp.toString();
+  return str ? `?${str}` : "";
+}
+
 export function validateEmail(email: string): string | null {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
