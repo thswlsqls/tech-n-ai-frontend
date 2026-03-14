@@ -40,6 +40,7 @@ AI/ML 기술 동향을 탐색하고, 북마크하고, AI 챗봇과 대화할 수
 - 위로 무한 스크롤 메시지 히스토리 (스크롤 위치 보존)
 - 타이핑 인디케이터, 실패 메시지 재시도
 - RAG 소스 인용 (관련도 점수 + 컬렉션 타입 배지)
+- 글자수 초과 시 초과량 표시 UX (`"N over limit"`)
 - 빈 상태 예시 질문
 
 ### 인증
@@ -93,7 +94,7 @@ src/
 │   ├── chatbot-api.ts               # 챗봇 세션·메시지 API
 │   ├── cookie-config.ts             # 쿠키 설정 및 백엔드 URL
 │   ├── constants.ts                 # 제공사/유형 라벨·색상 매핑
-│   └── utils.ts                     # cn(), 유효성 검증 유틸리티
+│   └── utils.ts                     # cn(), toQueryString(), 유효성 검증 유틸리티
 ├── types/
 │   ├── common.ts                    # PageData<T> 제네릭 페이지네이션 타입
 │   ├── auth.ts                      # 인증 타입

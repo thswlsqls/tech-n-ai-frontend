@@ -10,6 +10,7 @@
 | Language | TypeScript 5 |
 | UI | React 19, Radix UI, Lucide Icons |
 | Styling | Tailwind CSS v4, Neo-Brutalism 커스텀 디자인 시스템 |
+| Markdown | react-markdown, remark-gfm |
 | Fonts | Space Grotesk (sans), DM Mono (mono) |
 
 ## 주요 기능
@@ -30,6 +31,16 @@
 - 계정 수정 (사용자명, 비밀번호 변경)
 - 계정 삭제 (확인 대화상자 + 본인 계정 삭제 방지)
 
+### AI Agent 실행 (`/agent`)
+
+- 분할 레이아웃: 세션 사이드바 + 메시지 영역
+- Agent 실행: 목표(goal) 입력 → AI Agent 실행 결과 수신
+- 세션 관리: 자동 생성, 삭제 (확인 대화상자)
+- 메시지 히스토리: 위로 무한 스크롤 (스크롤 위치 보존)
+- 실행 메타 정보 표시: 성공 여부, 도구 호출 횟수, 분석 호출 횟수, 실행 시간
+- 마크다운 렌더링: GFM 지원 (테이블, 코드 블록, 링크 등)
+- 실패 메시지 재시도
+
 ## 프로젝트 구조
 
 ```
@@ -38,6 +49,7 @@ src/
 │   ├── layout.tsx                 # 루트 레이아웃 (폰트, AuthProvider, ToastProvider)
 │   ├── page.tsx                   # 대시보드 (/ 경로, 인증 필요)
 │   ├── accounts/page.tsx          # 계정 관리 페이지
+│   ├── agent/page.tsx             # AI Agent 실행 페이지
 │   ├── signin/page.tsx            # 로그인 페이지
 │   └── api/bff/auth/              # BFF 인증 라우트
 │       ├── login/route.ts
@@ -47,6 +59,7 @@ src/
 ├── components/
 │   ├── auth/                      # 인증 관련 컴포넌트 (Header, SigninForm)
 │   ├── admin/                     # 계정 관리 컴포넌트 (Table, CRUD Dialogs)
+│   ├── agent/                     # Agent 컴포넌트 (Sidebar, MessageArea, Input 등)
 │   └── ui/                        # 공통 UI 컴포넌트 (Button, Input, Dialog 등)
 ├── contexts/
 │   ├── auth-context.tsx           # 전역 인증 상태 관리
@@ -55,11 +68,14 @@ src/
 │   ├── auth-fetch.ts              # 인증 fetch 래퍼 (자동 토큰 갱신)
 │   ├── auth-api.ts                # 로그인/로그아웃 API
 │   ├── admin-api.ts               # 관리자 계정 CRUD API
+│   ├── agent-api.ts               # Agent 실행·세션·메시지 API
 │   ├── cookie-config.ts           # 쿠키 설정 및 백엔드 URL
-│   └── utils.ts                   # cn(), 유효성 검증 유틸리티
+│   └── utils.ts                   # cn(), toQueryString(), 유효성 검증 유틸리티
 ├── types/
 │   ├── auth.ts                    # 인증 관련 타입
-│   └── admin.ts                   # 관리자 계정 타입
+│   ├── admin.ts                   # 관리자 계정 타입
+│   ├── agent.ts                   # Agent 실행·세션·메시지 타입
+│   └── common.ts                  # PageData<T> 제네릭 페이지네이션 타입
 └── middleware.ts                  # /api/v1/* 요청에 Authorization 헤더 주입
 ```
 
