@@ -34,7 +34,7 @@ All prompts, implementations, and design decisions MUST follow these principles:
 ## Project Structure
 
 ```
-front-draft/
+tech-n-ai-frontend/
 ├── admin/          # Admin App (Next.js 16 — internal management)
 ├── app/            # User App (Next.js 16 — public-facing)
 ├── docs/           # Documentation (PRDs, API specs, prompts, etc.)

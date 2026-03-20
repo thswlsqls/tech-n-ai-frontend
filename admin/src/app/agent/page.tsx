@@ -14,6 +14,7 @@ import {
   runAgent,
   fetchAgentSessions,
   fetchAgentSessionMessages,
+  updateAgentSessionTitle,
 } from "@/lib/agent-api";
 import { AuthError } from "@/lib/auth-fetch";
 import type {
@@ -105,13 +106,15 @@ export default function AgentPage() {
       try {
         let targetPage = page;
         if (!prepend && !page) {
+          const PAGE_SIZE = 50;
           const meta = await fetchAgentSessionMessages(sid, {
             page: 1,
             size: 1,
           });
           if (!prepend && loadingSessionRef.current !== sid) return;
 
-          targetPage = meta.data.totalPageNumber;
+          // totalPageNumber은 size=1 기준이므로, 실제 PAGE_SIZE 기준으로 마지막 페이지 재계산
+          targetPage = Math.max(1, Math.ceil(meta.data.totalSize / PAGE_SIZE));
         }
 
         const data = await fetchAgentSessionMessages(sid, {
@@ -219,6 +222,8 @@ export default function AgentPage() {
             isActive: true,
           };
           setSessions((prev) => [newSession, ...prev]);
+          // 비동기 타이틀 생성 반영을 위해 지연 후 세션 목록 재조회
+          setTimeout(() => loadSessions(), 4000);
         }
 
         const assistantMessage: DisplayMessage = {
@@ -252,7 +257,7 @@ export default function AgentPage() {
         setIsSending(false);
       }
     },
-    [activeSessionId, showToast]
+    [activeSessionId, loadSessions, showToast]
   );
 
   // Retry failed goal
@@ -306,6 +311,37 @@ export default function AgentPage() {
     [activeSessionId, handleNewSession]
   );
 
+  // Edit session title (optimistic UI)
+  const handleEditTitle = useCallback(
+    async (sessionId: string, newTitle: string) => {
+      const prevTitle = sessions.find(
+        (s) => s.sessionId === sessionId
+      )?.title ?? null;
+
+      setSessions((prev) =>
+        prev.map((s) =>
+          s.sessionId === sessionId ? { ...s, title: newTitle } : s
+        )
+      );
+
+      try {
+        await updateAgentSessionTitle(sessionId, newTitle);
+      } catch (err) {
+        setSessions((prev) =>
+          prev.map((s) =>
+            s.sessionId === sessionId ? { ...s, title: prevTitle } : s
+          )
+        );
+        if (err instanceof AuthError) {
+          showToast(err.message, "error");
+        } else {
+          showToast("Failed to update title. Please try again.", "error");
+        }
+      }
+    },
+    [sessions, showToast]
+  );
+
   // Auth loading state
   if (authLoading || !user) {
     return (
@@ -336,6 +372,7 @@ export default function AgentPage() {
           onNewSession={handleNewSession}
           onDeleteSession={(id) => setDeleteSessionId(id)}
           onLoadMore={handleLoadMoreSessions}
+          onEditTitle={handleEditTitle}
         />
 
         <div className="flex min-w-0 flex-1 flex-col">

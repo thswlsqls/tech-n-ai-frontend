@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2, Plus, X } from "lucide-react";
+import { useState } from "react";
+import { Check, Loader2, Pencil, Plus, X } from "lucide-react";
 import type { SessionResponse } from "@/types/agent";
 
 function formatRelativeTime(iso: string): string {
@@ -30,6 +31,7 @@ interface Props {
   onNewSession: () => void;
   onDeleteSession: (sessionId: string) => void;
   onLoadMore: () => void;
+  onEditTitle: (sessionId: string, newTitle: string) => void;
 }
 
 export function AgentSidebar({
@@ -41,7 +43,40 @@ export function AgentSidebar({
   onNewSession,
   onDeleteSession,
   onLoadMore,
+  onEditTitle,
 }: Props) {
+  const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
+
+  const startEditing = (session: SessionResponse) => {
+    setEditingSessionId(session.sessionId);
+    setEditingTitle(session.title || "");
+  };
+
+  const cancelEdit = () => {
+    setEditingSessionId(null);
+    setEditingTitle("");
+  };
+
+  const saveEdit = () => {
+    const trimmed = editingTitle.trim();
+    if (!trimmed || !editingSessionId) {
+      cancelEdit();
+      return;
+    }
+
+    const currentTitle = sessions.find(
+      (s) => s.sessionId === editingSessionId
+    )?.title;
+    if (trimmed === currentTitle) {
+      cancelEdit();
+      return;
+    }
+
+    onEditTitle(editingSessionId, trimmed);
+    cancelEdit();
+  };
+
   return (
     <aside
       className="flex h-full w-72 flex-col border-r-2 border-black bg-white"
@@ -53,7 +88,7 @@ export function AgentSidebar({
         <button
           onClick={onNewSession}
           aria-label="Start new session"
-          className="brutal-border brutal-shadow-sm brutal-hover flex w-full items-center justify-center gap-2 bg-[#3B82F6] px-4 py-2 text-sm font-bold text-white"
+          className="brutal-border brutal-shadow-sm brutal-hover flex w-full items-center justify-center gap-2 bg-primary px-4 py-2 text-sm font-bold text-primary-foreground"
         >
           <Plus className="size-4" />
           New Session
@@ -68,28 +103,57 @@ export function AgentSidebar({
           </p>
         ) : (
           sessions.map((session) => {
+            const isEditing = editingSessionId === session.sessionId;
             const displayTitle = session.title || "New Session";
 
             return (
-              <button
+              <div
                 key={session.sessionId}
-                onClick={() => onSelectSession(session.sessionId)}
-                className={`group w-full cursor-pointer border-b-2 border-black px-4 py-3 text-left transition-colors ${
+                role="button"
+                tabIndex={0}
+                aria-label={`${displayTitle}, ${session.lastMessageAt ? formatRelativeTime(session.lastMessageAt) : ""}`}
+                onClick={() => {
+                  if (!isEditing) onSelectSession(session.sessionId);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !isEditing)
+                    onSelectSession(session.sessionId);
+                }}
+                className={`group cursor-pointer border-b-2 border-black px-4 py-3 transition-colors ${
                   activeSessionId === session.sessionId
-                    ? "bg-[#DBEAFE]"
-                    : "hover:bg-[#DBEAFE]"
+                    ? "bg-accent"
+                    : "hover:bg-accent"
                 }`}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <p
-                      className={`truncate text-sm font-bold ${
-                        !session.title ? "italic text-muted-foreground" : ""
-                      }`}
-                      title={displayTitle}
-                    >
-                      {displayTitle}
-                    </p>
+                    {isEditing ? (
+                      <input
+                        type="text"
+                        value={editingTitle}
+                        onChange={(e) => setEditingTitle(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") saveEdit();
+                          if (e.key === "Escape") cancelEdit();
+                        }}
+                        onBlur={cancelEdit}
+                        maxLength={200}
+                        autoFocus
+                        aria-label="Edit session title"
+                        className="w-full border-2 border-black bg-white px-1 py-0 text-sm font-bold outline-none"
+                      />
+                    ) : (
+                      <p
+                        className={`truncate text-sm font-bold ${
+                          !session.title
+                            ? "italic text-muted-foreground"
+                            : ""
+                        }`}
+                        title={displayTitle}
+                      >
+                        {displayTitle}
+                      </p>
+                    )}
                     {session.lastMessageAt && (
                       <p className="mt-0.5 font-mono text-xs text-muted-foreground">
                         {formatRelativeTime(session.lastMessageAt)}
@@ -97,32 +161,71 @@ export function AgentSidebar({
                     )}
                   </div>
 
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteSession(session.sessionId);
-                    }}
-                    aria-label="Delete session"
-                    className="shrink-0 p-1 opacity-0 transition-all hover:text-[#EF4444] group-hover:opacity-100"
-                  >
-                    <X className="size-4" />
-                  </button>
+                  {isEditing ? (
+                    <>
+                      <button
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          saveEdit();
+                        }}
+                        aria-label="Save title"
+                        className="shrink-0 p-1 transition-all hover:text-primary"
+                      >
+                        <Check className="size-4" />
+                      </button>
+                      <button
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          cancelEdit();
+                        }}
+                        aria-label="Cancel editing"
+                        className="shrink-0 p-1 transition-all hover:text-destructive"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          startEditing(session);
+                        }}
+                        aria-label="Edit session title"
+                        className="shrink-0 p-1 opacity-0 transition-all hover:text-primary group-hover:opacity-100"
+                      >
+                        <Pencil className="size-3.5" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDeleteSession(session.sessionId);
+                        }}
+                        aria-label="Delete session"
+                        className="shrink-0 p-1 opacity-0 transition-all hover:text-destructive group-hover:opacity-100"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </>
+                  )}
                 </div>
-              </button>
+              </div>
             );
           })
         )}
 
         {isLoading && (
           <div className="flex justify-center py-4">
-            <Loader2 className="size-5 animate-spin text-[#3B82F6]" />
+            <Loader2 className="size-5 animate-spin text-primary" />
           </div>
         )}
 
         {hasMore && !isLoading && (
           <button
             onClick={onLoadMore}
-            className="w-full py-3 text-sm font-bold text-[#3B82F6] transition-colors hover:bg-[#DBEAFE]"
+            className="w-full py-3 text-sm font-bold text-primary transition-colors hover:bg-accent"
           >
             Load more
           </button>

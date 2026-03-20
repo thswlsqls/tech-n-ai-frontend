@@ -47,6 +47,20 @@ export async function fetchAgentSessionMessages(
   return parseResponse<MessageListResponse>(res);
 }
 
+export async function updateAgentSessionTitle(
+  sessionId: string,
+  title: string
+): Promise<SessionResponse> {
+  const res = await authFetch(
+    `${BASE}/sessions/${encodeURIComponent(sessionId)}/title`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({ title }),
+    }
+  );
+  return parseResponse<SessionResponse>(res);
+}
+
 export async function deleteAgentSession(sessionId: string): Promise<void> {
   const res = await authFetch(
     `${BASE}/sessions/${encodeURIComponent(sessionId)}`,
