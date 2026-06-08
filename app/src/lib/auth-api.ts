@@ -11,8 +11,6 @@ import {
   authFetch,
   parseResponse,
   parseVoidResponse,
-  AuthError,
-  getErrorMessage,
 } from "@/lib/auth-fetch";
 
 const AUTH_BASE = "/api/v1/auth";
@@ -38,17 +36,7 @@ export async function login(req: LoginRequest): Promise<{ user: AuthUser }> {
     body: JSON.stringify(req),
   });
 
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new AuthError(
-      getErrorMessage(json.messageCode?.code, res.status),
-      res.status,
-      json.messageCode?.code
-    );
-  }
-
-  return json.data;
+  return parseResponse<{ user: AuthUser }>(res);
 }
 
 export async function withdraw(req?: WithdrawRequest): Promise<void> {
@@ -102,15 +90,5 @@ export async function oauthCallback(
 
   const res = await fetch(`${BFF_BASE}/oauth/callback?${params.toString()}`);
 
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new AuthError(
-      getErrorMessage(json.messageCode?.code, res.status),
-      res.status,
-      json.messageCode?.code
-    );
-  }
-
-  return json.data;
+  return parseResponse<{ user: AuthUser }>(res);
 }

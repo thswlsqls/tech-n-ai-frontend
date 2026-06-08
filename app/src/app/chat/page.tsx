@@ -21,9 +21,20 @@ import { AuthError } from "@/lib/auth-fetch";
 import type {
   SessionResponse,
   SessionListResponse,
+  MessageResponse,
 } from "@/types/chatbot";
 
 let tempIdCounter = 0;
+
+// 서버 메시지를 화면 표시용으로 바꾼다
+function toDisplayMessages(messages: MessageResponse[]): DisplayMessage[] {
+  return messages.map((msg) => ({
+    id: msg.messageId,
+    role: msg.role,
+    content: msg.content,
+    createdAt: msg.createdAt,
+  }));
+}
 
 export default function ChatPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -115,14 +126,7 @@ export default function ChatPage() {
 
           if (meta.data.totalPageNumber <= 1) {
             // Single page — use data directly
-            const displayMessages: DisplayMessage[] = meta.data.list.map(
-              (msg) => ({
-                id: msg.messageId,
-                role: msg.role,
-                content: msg.content,
-                createdAt: msg.createdAt,
-              })
-            );
+            const displayMessages = toDisplayMessages(meta.data.list);
             setMessages(displayMessages);
             setMessagesCurrentPage(1);
             setHasOlderMessages(false);
@@ -140,12 +144,7 @@ export default function ChatPage() {
         // Guard against stale response (race condition)
         if (!prepend && loadingSessionRef.current !== sessionId) return;
 
-        const displayMessages: DisplayMessage[] = data.data.list.map((msg) => ({
-          id: msg.messageId,
-          role: msg.role,
-          content: msg.content,
-          createdAt: msg.createdAt,
-        }));
+        const displayMessages = toDisplayMessages(data.data.list);
 
         if (prepend) {
           setMessages((prev) => [...displayMessages, ...prev]);

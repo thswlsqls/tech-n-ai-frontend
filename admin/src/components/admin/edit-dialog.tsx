@@ -13,6 +13,7 @@ import { updateAdminAccount } from "@/lib/admin-api";
 import { AuthError } from "@/lib/auth-fetch";
 import { useToast } from "@/contexts/toast-context";
 import { validateUsername, validatePassword } from "@/lib/utils";
+import { AccountFormField } from "@/components/admin/account-form-field";
 import type { AdminResponse } from "@/types/admin";
 
 interface EditDialogProps {
@@ -126,56 +127,31 @@ export function EditDialog({
             <p className="text-sm">{admin?.email}</p>
           </div>
 
-          <div>
-            <label
-              htmlFor="edit-username"
-              className="mb-1.5 block text-sm font-bold uppercase tracking-wide"
-            >
-              Username
-            </label>
-            <input
-              id="edit-username"
-              type="text"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                handleChange("username", e.target.value);
-              }}
-              onBlur={() => handleBlur("username", username)}
-              className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-            />
-            {touched.username && errors.username && (
-              <p className="mt-1 text-sm text-[#EF4444]" aria-live="polite">
-                {errors.username}
-              </p>
-            )}
-          </div>
+          <AccountFormField
+            id="edit-username"
+            label="Username"
+            value={username}
+            onChange={(value) => {
+              setUsername(value);
+              handleChange("username", value);
+            }}
+            onBlur={() => handleBlur("username", username)}
+            error={touched.username ? errors.username : undefined}
+          />
 
-          <div>
-            <label
-              htmlFor="edit-password"
-              className="mb-1.5 block text-sm font-bold uppercase tracking-wide"
-            >
-              New Password (optional)
-            </label>
-            <input
-              id="edit-password"
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                handleChange("password", e.target.value);
-              }}
-              onBlur={() => handleBlur("password", password)}
-              placeholder="Enter new password (optional)"
-              className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-            />
-            {touched.password && errors.password && (
-              <p className="mt-1 text-sm text-[#EF4444]" aria-live="polite">
-                {errors.password}
-              </p>
-            )}
-          </div>
+          <AccountFormField
+            id="edit-password"
+            label="New Password (optional)"
+            type="password"
+            value={password}
+            onChange={(value) => {
+              setPassword(value);
+              handleChange("password", value);
+            }}
+            onBlur={() => handleBlur("password", password)}
+            placeholder="Enter new password (optional)"
+            error={touched.password ? errors.password : undefined}
+          />
 
           <div className="flex justify-end gap-3 pt-2">
             <button

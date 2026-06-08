@@ -10,9 +10,9 @@ import { Pagination } from "@/components/emerging-tech/pagination";
 import { fetchDeletedBookmarks, restoreBookmark } from "@/lib/bookmark-api";
 import { useToast } from "@/contexts/toast-context";
 import { AuthError } from "@/lib/auth-fetch";
-import { PROVIDER_COLORS, PROVIDER_LABELS } from "@/lib/constants";
+import { resolveProvider } from "@/lib/constants";
+import { formatBookmarkDate } from "@/lib/utils";
 import type { BookmarkDetailResponse } from "@/types/bookmark";
-import type { TechProvider } from "@/types/emerging-tech";
 
 const DAYS_OPTIONS = [7, 14, 30, 60, 90];
 
@@ -152,22 +152,11 @@ export default function DeletedBookmarksPage() {
         ) : (
           <div className="space-y-4">
             {bookmarks.map((bookmark) => {
-              const providerKey = bookmark.provider as TechProvider | null;
-              const providerColor =
-                providerKey && PROVIDER_COLORS[providerKey]
-                  ? PROVIDER_COLORS[providerKey]
-                  : "bg-gray-500 text-white";
-              const providerLabel =
-                providerKey && PROVIDER_LABELS[providerKey]
-                  ? PROVIDER_LABELS[providerKey]
-                  : bookmark.provider;
+              const { color: providerColor, label: providerLabel } =
+                resolveProvider(bookmark.provider);
 
               const deletedDate = bookmark.updatedAt
-                ? new Date(bookmark.updatedAt).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })
+                ? formatBookmarkDate(bookmark.updatedAt)
                 : "";
 
               return (

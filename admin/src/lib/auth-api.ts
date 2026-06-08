@@ -1,16 +1,13 @@
 import type { AdminUser } from "@/types/auth";
-import {
-  authFetch,
-  parseVoidResponse,
-  AuthError,
-  getErrorMessage,
-} from "@/lib/auth-fetch";
+import { authFetch, parseResponse, parseVoidResponse } from "@/lib/auth-fetch";
 
 const BFF_BASE = "/api/bff/auth";
 
 /**
  * Admin login via BFF — tokens are stored in HttpOnly cookies server-side.
  * Returns user info only (no tokens exposed to client).
+ * Uses raw fetch (not authFetch) since there is no token to attach yet
+ * and a 401 here must not trigger the refresh-and-retry flow.
  */
 export async function adminLogin(
   email: string,
@@ -22,18 +19,7 @@ export async function adminLogin(
     body: JSON.stringify({ email, password }),
   });
 
-  const json = await res.json();
-
-  if (!res.ok) {
-    throw new AuthError(
-      getErrorMessage(json.messageCode?.code, res.status),
-      res.status,
-      json.messageCode?.code,
-      json.message || json.messageCode?.text
-    );
-  }
-
-  return json.data;
+  return parseResponse<{ user: AdminUser }>(res);
 }
 
 export async function logout(): Promise<void> {

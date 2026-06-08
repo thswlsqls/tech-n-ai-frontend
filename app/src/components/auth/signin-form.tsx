@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { validateEmail } from "@/lib/utils";
 import { AuthError } from "@/lib/auth-fetch";
 import { OAuthButtons } from "./oauth-buttons";
+import { AuthFormField } from "./auth-form-field";
 
 export function SigninForm() {
   const router = useRouter();
@@ -81,44 +82,30 @@ export function SigninForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-bold uppercase tracking-wide">
-            Email
-          </label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              handleChange("email", e.target.value);
-            }}
-            onBlur={() => handleBlur("email", email)}
-            placeholder="you@example.com"
-            className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-          />
-          {touched.email && errors.email && (
-            <p className="mt-1 text-sm text-[#EF4444]">{errors.email}</p>
-          )}
-        </div>
+        <AuthFormField
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(value) => {
+            setEmail(value);
+            handleChange("email", value);
+          }}
+          onBlur={() => handleBlur("email", email)}
+          placeholder="you@example.com"
+          error={touched.email ? errors.email : undefined}
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-bold uppercase tracking-wide">
-            Password
-          </label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              handleChange("password", e.target.value);
-            }}
-            onBlur={() => handleBlur("password", password)}
-            className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-          />
-          {touched.password && errors.password && (
-            <p className="mt-1 text-sm text-[#EF4444]">{errors.password}</p>
-          )}
-        </div>
+        <AuthFormField
+          label="Password"
+          type="password"
+          value={password}
+          onChange={(value) => {
+            setPassword(value);
+            handleChange("password", value);
+          }}
+          onBlur={() => handleBlur("password", password)}
+          error={touched.password ? errors.password : undefined}
+        />
 
         <div className="text-right">
           <Link

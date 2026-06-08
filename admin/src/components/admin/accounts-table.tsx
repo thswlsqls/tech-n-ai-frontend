@@ -3,6 +3,7 @@
 import { Eye, Pencil, Plus, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/auth-context";
+import { formatDate } from "@/lib/utils";
 import type { AdminResponse } from "@/types/admin";
 
 interface AccountsTableProps {
@@ -12,14 +13,6 @@ interface AccountsTableProps {
   onEdit: (admin: AdminResponse) => void;
   onDelete: (admin: AdminResponse) => void;
   onCreate: () => void;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "Never";
-  const d = new Date(dateStr);
-  const date = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
-  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); // HH:mm
-  return `${date} ${time}`;
 }
 
 function SkeletonRows() {

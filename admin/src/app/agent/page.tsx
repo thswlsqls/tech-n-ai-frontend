@@ -20,9 +20,36 @@ import { AuthError } from "@/lib/auth-fetch";
 import type {
   SessionResponse,
   SessionListResponse,
+  MessageResponse,
 } from "@/types/agent";
 
 let tempIdCounter = 0;
+
+// 서버 메시지를 화면 표시용으로 바꾸고, 같은 messageId 중복은 제거한다
+function toDisplayMessages(messages: MessageResponse[]): DisplayMessage[] {
+  const seen = new Set<string>();
+  return messages
+    .filter((msg) => {
+      if (seen.has(msg.messageId)) return false;
+      seen.add(msg.messageId);
+      return true;
+    })
+    .map((msg) => ({
+      id: msg.messageId,
+      role: msg.role,
+      content: msg.content,
+      createdAt: msg.createdAt,
+    }));
+}
+
+// 이미 있는 id의 메시지는 걸러, 목록을 합칠 때 중복을 막는다
+function filterNewMessages(
+  existing: DisplayMessage[],
+  incoming: DisplayMessage[]
+): DisplayMessage[] {
+  const existingIds = new Set(existing.map((m) => m.id));
+  return incoming.filter((m) => !existingIds.has(m.id));
+}
 
 export default function AgentPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -124,28 +151,13 @@ export default function AgentPage() {
 
         if (!prepend && loadingSessionRef.current !== sid) return;
 
-        const seen = new Set<string>();
-        const displayMessages: DisplayMessage[] = data.data.list
-          .filter((msg) => {
-            if (seen.has(msg.messageId)) return false;
-            seen.add(msg.messageId);
-            return true;
-          })
-          .map((msg) => ({
-            id: msg.messageId,
-            role: msg.role,
-            content: msg.content,
-            createdAt: msg.createdAt,
-          }));
+        const displayMessages = toDisplayMessages(data.data.list);
 
         if (prepend) {
-          setMessages((prev) => {
-            const existingIds = new Set(prev.map((m) => m.id));
-            const newOnly = displayMessages.filter(
-              (m) => !existingIds.has(m.id)
-            );
-            return [...newOnly, ...prev];
-          });
+          setMessages((prev) => [
+            ...filterNewMessages(prev, displayMessages),
+            ...prev,
+          ]);
         } else {
           setMessages(displayMessages);
         }
@@ -253,9 +265,8 @@ export default function AgentPage() {
         };
 
         setMessages((prev) => {
-          const existingIds = new Set(prev.map((m) => m.id));
-          if (existingIds.has(assistantMessage.id)) return prev;
-          return [...prev, assistantMessage];
+          const fresh = filterNewMessages(prev, [assistantMessage]);
+          return fresh.length > 0 ? [...prev, ...fresh] : prev;
         });
       } catch (err) {
         failedGoalRef.current.set(tempId, trimmed);

@@ -13,6 +13,7 @@ import { createAdminAccount } from "@/lib/admin-api";
 import { AuthError } from "@/lib/auth-fetch";
 import { useToast } from "@/contexts/toast-context";
 import { validateEmail, validateUsername, validatePassword } from "@/lib/utils";
+import { AccountFormField } from "@/components/admin/account-form-field";
 
 interface CreateDialogProps {
   open: boolean;
@@ -122,83 +123,46 @@ export function CreateDialog({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="create-email"
-              className="mb-1.5 block text-sm font-bold uppercase tracking-wide"
-            >
-              Email
-            </label>
-            <input
-              id="create-email"
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                handleChange("email", e.target.value);
-              }}
-              onBlur={() => handleBlur("email", email)}
-              placeholder="admin@example.com"
-              className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-            />
-            {touched.email && errors.email && (
-              <p className="mt-1 text-sm text-[#EF4444]" aria-live="polite">
-                {errors.email}
-              </p>
-            )}
-          </div>
+          <AccountFormField
+            id="create-email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(value) => {
+              setEmail(value);
+              handleChange("email", value);
+            }}
+            onBlur={() => handleBlur("email", email)}
+            placeholder="admin@example.com"
+            error={touched.email ? errors.email : undefined}
+          />
 
-          <div>
-            <label
-              htmlFor="create-username"
-              className="mb-1.5 block text-sm font-bold uppercase tracking-wide"
-            >
-              Username
-            </label>
-            <input
-              id="create-username"
-              type="text"
-              value={username}
-              onChange={(e) => {
-                setUsername(e.target.value);
-                handleChange("username", e.target.value);
-              }}
-              onBlur={() => handleBlur("username", username)}
-              placeholder="Enter username"
-              className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-            />
-            {touched.username && errors.username && (
-              <p className="mt-1 text-sm text-[#EF4444]" aria-live="polite">
-                {errors.username}
-              </p>
-            )}
-          </div>
+          <AccountFormField
+            id="create-username"
+            label="Username"
+            value={username}
+            onChange={(value) => {
+              setUsername(value);
+              handleChange("username", value);
+            }}
+            onBlur={() => handleBlur("username", username)}
+            placeholder="Enter username"
+            error={touched.username ? errors.username : undefined}
+          />
 
-          <div>
-            <label
-              htmlFor="create-password"
-              className="mb-1.5 block text-sm font-bold uppercase tracking-wide"
-            >
-              Password
-            </label>
-            <input
-              id="create-password"
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                handleChange("password", e.target.value);
-              }}
-              onBlur={() => handleBlur("password", password)}
-              placeholder="Enter password"
-              className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-            />
-            {touched.password && errors.password && (
-              <p className="mt-1 text-sm text-[#EF4444]" aria-live="polite">
-                {errors.password}
-              </p>
-            )}
-          </div>
+          <AccountFormField
+            id="create-password"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(value) => {
+              setPassword(value);
+              handleChange("password", value);
+            }}
+            onBlur={() => handleBlur("password", password)}
+            placeholder="Enter password"
+            error={touched.password ? errors.password : undefined}
+          />
 
           <div className="flex justify-end gap-3 pt-2">
             <button

@@ -2,8 +2,8 @@
 
 import { History, Pencil, Trash2 } from "lucide-react";
 import type { BookmarkDetailResponse } from "@/types/bookmark";
-import { PROVIDER_COLORS, PROVIDER_LABELS } from "@/lib/constants";
-import type { TechProvider } from "@/types/emerging-tech";
+import { resolveProvider } from "@/lib/constants";
+import { formatBookmarkDate } from "@/lib/utils";
 
 interface BookmarkCardProps {
   bookmark: BookmarkDetailResponse;
@@ -18,19 +18,10 @@ export function BookmarkCard({
   onDelete,
   onHistory,
 }: BookmarkCardProps) {
-  const createdDate = new Date(bookmark.createdAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-
-  const providerKey = bookmark.provider as TechProvider | null;
-  const providerColor = providerKey && PROVIDER_COLORS[providerKey]
-    ? PROVIDER_COLORS[providerKey]
-    : "bg-gray-500 text-white";
-  const providerLabel = providerKey && PROVIDER_LABELS[providerKey]
-    ? PROVIDER_LABELS[providerKey]
-    : bookmark.provider;
+  const createdDate = formatBookmarkDate(bookmark.createdAt);
+  const { color: providerColor, label: providerLabel } = resolveProvider(
+    bookmark.provider
+  );
 
   return (
     <article className="brutal-border brutal-shadow bg-white p-5">

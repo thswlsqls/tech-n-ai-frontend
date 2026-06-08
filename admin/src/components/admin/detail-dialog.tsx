@@ -12,20 +12,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { fetchAdminDetail } from "@/lib/admin-api";
 import { useToast } from "@/contexts/toast-context";
+import { formatDate } from "@/lib/utils";
 import type { AdminResponse } from "@/types/admin";
 
 interface DetailDialogProps {
   adminId: number | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function formatDate(dateStr: string | null): string {
-  if (!dateStr) return "Never";
-  const d = new Date(dateStr);
-  const date = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
-  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); // HH:mm
-  return `${date} ${time}`;
 }
 
 export function DetailDialog({

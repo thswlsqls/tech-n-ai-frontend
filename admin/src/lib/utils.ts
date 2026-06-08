@@ -37,3 +37,11 @@ export function validatePassword(password: string): string | null {
   }
   return null;
 }
+
+export function formatDate(dateStr: string | null): string {
+  if (!dateStr) return "Never";
+  const d = new Date(dateStr);
+  const date = d.toLocaleDateString("en-CA"); // YYYY-MM-DD
+  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }); // HH:mm
+  return `${date} ${time}`;
+}

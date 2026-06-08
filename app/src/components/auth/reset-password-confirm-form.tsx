@@ -6,6 +6,7 @@ import { Loader2, CheckCircle } from "lucide-react";
 import { resetPasswordConfirm } from "@/lib/auth-api";
 import { validatePassword } from "@/lib/utils";
 import { AuthError } from "@/lib/auth-fetch";
+import { AuthFormField } from "./auth-form-field";
 
 interface Props {
   token: string;
@@ -113,47 +114,29 @@ export function ResetPasswordConfirmForm({ token }: Props) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div>
-          <label className="mb-1.5 block text-sm font-bold uppercase tracking-wide">
-            New Password
-          </label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => {
-              setNewPassword(e.target.value);
-              handleChange("newPassword", e.target.value);
-            }}
-            onBlur={() => handleBlur("newPassword", newPassword)}
-            className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-          />
-          {touched.newPassword && errors.newPassword && (
-            <p className="mt-1 text-sm text-[#EF4444]">
-              {errors.newPassword}
-            </p>
-          )}
-        </div>
+        <AuthFormField
+          label="New Password"
+          type="password"
+          value={newPassword}
+          onChange={(value) => {
+            setNewPassword(value);
+            handleChange("newPassword", value);
+          }}
+          onBlur={() => handleBlur("newPassword", newPassword)}
+          error={touched.newPassword ? errors.newPassword : undefined}
+        />
 
-        <div>
-          <label className="mb-1.5 block text-sm font-bold uppercase tracking-wide">
-            Confirm New Password
-          </label>
-          <input
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-              handleChange("confirmPassword", e.target.value);
-            }}
-            onBlur={() => handleBlur("confirmPassword", confirmPassword)}
-            className="brutal-border w-full px-4 py-3 text-base focus:border-[#3B82F6] focus:outline-none"
-          />
-          {touched.confirmPassword && errors.confirmPassword && (
-            <p className="mt-1 text-sm text-[#EF4444]">
-              {errors.confirmPassword}
-            </p>
-          )}
-        </div>
+        <AuthFormField
+          label="Confirm New Password"
+          type="password"
+          value={confirmPassword}
+          onChange={(value) => {
+            setConfirmPassword(value);
+            handleChange("confirmPassword", value);
+          }}
+          onBlur={() => handleBlur("confirmPassword", confirmPassword)}
+          error={touched.confirmPassword ? errors.confirmPassword : undefined}
+        />
 
         <button
           type="submit"
