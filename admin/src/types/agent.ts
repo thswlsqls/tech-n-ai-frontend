@@ -30,12 +30,15 @@ export interface ChartMeta {
   groupBy: string;
   startDate: string | null;
   endDate: string | null;
-  totalCount: number;
+  // 백엔드가 Java long을 전역 Jackson 설정으로 JSON 문자열로 직렬화한다.
+  // 렌더링 시 agent-chart.tsx에서 Number()로 변환해 쓴다.
+  totalCount: string;
 }
 
 export interface DataPoint {
   label: string;
-  value: number;
+  // totalCount와 같은 이유로 문자열이다(백엔드 long → JSON string).
+  value: string;
 }
 
 export interface SessionResponse {
