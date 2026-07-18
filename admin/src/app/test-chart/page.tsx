@@ -7,12 +7,12 @@ import type { ChartData } from "@/types/agent";
 const testChart: ChartData = {
   chartType: "pie",
   title: "Provider별 통계",
-  meta: { groupBy: "provider", startDate: null, endDate: null, totalCount: 303 },
+  meta: { groupBy: "provider", startDate: null, endDate: null, totalCount: "303" },
   dataPoints: [
-    { label: "OPENAI", value: 130 },
-    { label: "ANTHROPIC", value: 76 },
-    { label: "GOOGLE", value: 65 },
-    { label: "META", value: 32 },
+    { label: "OPENAI", value: "130" },
+    { label: "ANTHROPIC", value: "76" },
+    { label: "GOOGLE", value: "65" },
+    { label: "META", value: "32" },
   ],
 };
 
