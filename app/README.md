@@ -8,7 +8,7 @@ AI/ML 기술 동향을 탐색하고, 북마크하고, AI 챗봇과 대화할 수
 |---|---|
 | Framework | Next.js 16 (App Router) |
 | Language | TypeScript 5 |
-| UI | React 19, Radix UI, Lucide Icons |
+| UI | React 19, shadcn/ui (new-york) + Radix UI, Lucide Icons |
 | Styling | Tailwind CSS v4, Neo-Brutalism 커스텀 디자인 시스템 |
 | Date | date-fns v4, react-day-picker v9 |
 | Fonts | Space Grotesk (sans), DM Mono (mono) |
@@ -46,7 +46,7 @@ AI/ML 기술 동향을 탐색하고, 북마크하고, AI 챗봇과 대화할 수
 ### 인증
 
 - 이메일/비밀번호 회원가입 (이메일 인증)
-- 이메일/비밀번호 로그인
+- 이메일/비밀번호 로그인, 로그아웃
 - Google OAuth 소셜 로그인
 - 비밀번호 재설정 (이메일 요청 → 토큰 확인)
 - 계정 삭제
@@ -112,7 +112,8 @@ src/
 
 1. **로그인**: BFF 라우트가 백엔드에서 받은 JWT 토큰을 HttpOnly 쿠키로 설정, 디코딩된 사용자 정보만 클라이언트에 반환
 2. **세션 복원**: `AuthProvider`가 마운트 시 `/api/bff/auth/me` 호출 → 쿠키의 JWT 디코딩 → 사용자 정보 반환
-3. **인증된 요청**: Next.js 미들웨어가 `/api/v1/*` 요청에 쿠키에서 읽은 토큰을 `Authorization` 헤더로 주입
+3. **요청 프록시**: `next.config.ts`의 rewrite가 `/api/:path*`를 백엔드(`http://localhost:8081`)로 넘긴다. `/api/bff/*`는 로컬 route handler가 먼저 처리
+4. **인증된 요청**: Next.js 미들웨어가 `/api/v1/*` 요청에 쿠키에서 읽은 토큰을 `Authorization` 헤더로 주입
 4. **토큰 갱신**: 401 응답 시 `authFetch`가 자동으로 `/api/bff/auth/refresh` 호출 후 원래 요청 재시도
 5. **OAuth**: Google OAuth 콜백 → BFF 라우트가 코드 교환 → HttpOnly 쿠키 설정 → 사용자 정보 반환
 

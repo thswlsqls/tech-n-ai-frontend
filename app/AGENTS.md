@@ -1,4 +1,4 @@
-# CLAUDE.md — User App
+# AGENTS.md — User App
 
 ## 사람이 검증하는 텍스트 작성 규칙
 

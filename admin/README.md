@@ -1,6 +1,6 @@
 # Tech N AI — Admin
 
-관리자 계정을 관리하기 위한 Next.js 기반 어드민 패널입니다.
+관리자 계정 관리와 AI Agent 실행 기능을 제공하는 Next.js 기반 어드민 패널입니다.
 
 ## 기술 스택
 
@@ -11,6 +11,7 @@
 | UI | React 19, Radix UI, Lucide Icons |
 | Styling | Tailwind CSS v4, Neo-Brutalism 커스텀 디자인 시스템 |
 | Markdown | react-markdown, remark-gfm |
+| Charts | Recharts (Agent 실행 결과 차트) |
 | Fonts | Space Grotesk (sans), DM Mono (mono) |
 
 ## 주요 기능
@@ -35,9 +36,10 @@
 
 - 분할 레이아웃: 세션 사이드바 + 메시지 영역
 - Agent 실행: 목표(goal) 입력 → AI Agent 실행 결과 수신
-- 세션 관리: 자동 생성, 삭제 (확인 대화상자)
-- 메시지 히스토리: 위로 무한 스크롤 (스크롤 위치 보존)
+- 세션 관리: 자동 생성, 삭제 (확인 대화상자), 제목 수정 (사이드바 인라인 편집, 실패 시 원래 제목으로 복원)
+- 메시지 히스토리: 위로 무한 스크롤 (스크롤 위치 보존), 맨 아래로 이동 버튼
 - 실행 메타 정보 표시: 성공 여부, 도구 호출 횟수, 분석 호출 횟수, 실행 시간
+- 실행 결과 차트 렌더링: pie/bar 차트 (Recharts)
 - 마크다운 렌더링: GFM 지원 (테이블, 코드 블록, 링크 등)
 - 실패 메시지 재시도
 
@@ -51,6 +53,7 @@ src/
 │   ├── accounts/page.tsx          # 계정 관리 페이지
 │   ├── agent/page.tsx             # AI Agent 실행 페이지
 │   ├── signin/page.tsx            # 로그인 페이지
+│   ├── test-chart/page.tsx        # 차트 렌더링 확인용 개발 페이지
 │   └── api/bff/auth/              # BFF 인증 라우트
 │       ├── login/route.ts
 │       ├── logout/route.ts
@@ -59,7 +62,7 @@ src/
 ├── components/
 │   ├── auth/                      # 인증 관련 컴포넌트 (Header, SigninForm)
 │   ├── admin/                     # 계정 관리 컴포넌트 (Table, CRUD Dialogs)
-│   ├── agent/                     # Agent 컴포넌트 (Sidebar, MessageArea, Input 등)
+│   ├── agent/                     # Agent 컴포넌트 (Sidebar, MessageArea, Chart 등)
 │   └── ui/                        # 공통 UI 컴포넌트 (Button, Input, Dialog 등)
 ├── contexts/
 │   ├── auth-context.tsx           # 전역 인증 상태 관리
@@ -120,4 +123,4 @@ npm run dev
 | `npm run dev` | 개발 서버 실행 (포트 3001) |
 | `npm run build` | 프로덕션 빌드 |
 | `npm run start` | 프로덕션 서버 실행 (포트 3001) |
-| `npm run lint` | ESLint 실행 |
+| `npm run lint` | ESLint 실행 — 현재 `eslint.config.mjs` 파일이 없어서 실행하면 에러가 난다 |
