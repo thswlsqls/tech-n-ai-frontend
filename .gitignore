@@ -26,3 +26,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent/tool local settings
+.agents/
+.claude/
+.rtk/
+.serena/
