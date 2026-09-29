@@ -38,7 +38,7 @@ npm install
 npm run dev   # app → http://localhost:3000, admin → http://localhost:3001
 ```
 
-`./scripts/tmux-frontend.sh`를 실행하면 두 앱의 작업 창이 갖춰진 tmux 세션이 한 번에 열립니다.
+`./scripts/tmux-frontend.sh`를 실행하면 앱별 작업 창이 나뉜 tmux 세션이 한 번에 열립니다.
 
 ### 백엔드 연결
 
